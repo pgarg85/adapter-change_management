@@ -100,9 +100,8 @@ function processRequestResults(error, response, body, callback) {
     } else {
       callback.data = response;
     }
-    return callback;
+    return callback(callback.data , callback.error);
 }
-
 
 /**
  * @function sendRequest
