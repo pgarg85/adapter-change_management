@@ -95,17 +95,12 @@ class ServiceNowAdapter extends EventEmitter {
    */
   healthcheck(callback) {
     this.getRecord((result, error) => {
-      if (error) {
-          this.emitOffline();
-          log.error(`ServiceNow: Instance is unavailable. (${this.id})`);
-          if (callback) {
-            callback(errorMessage);
-          }         
+        if (error) {
+        this.emitOffline()
+        log.error(this.id+"FAILED TO CONNECT: "+error)
       } else {
-          this.emitOnline();
-          if (callback) {
-              callback(responseData);
-          }        
+        this.emitOnline()
+        log.debug(this.id+"CONNECTION SUCCESS")
       }
     });
   }
@@ -157,7 +152,7 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   getRecord(callback) {
-   ServiceNowConnector.get(callback)
+   this.connector.get(callback)
   }
   
   /**
@@ -170,7 +165,7 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   postRecord(callback) {
-   ServiceNowConnector.post(callback);
+   this.connector.post(callback);
   }
 }
 
