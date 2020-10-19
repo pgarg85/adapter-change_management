@@ -95,17 +95,12 @@ class ServiceNowAdapter extends EventEmitter {
    */
   healthcheck(callback) {
     this.getRecord((result, error) => {
-      if (error) {
-          this.emitOffline();
-          log.error(`ServiceNow: Instance is unavailable. (${this.id})`);
-          if (callback) {
-            callback(errorMessage);
-          }         
+        if (error) {
+        this.emitOffline()
+        log.error(this.id+"FAILED TO CONNECT: "+error)
       } else {
-          this.emitOnline();
-          if (callback) {
-              callback(responseData);
-          }        
+        this.emitOnline()
+        log.debug(this.id+"CONNECTION SUCCESS")
       }
     });
   }
@@ -157,31 +152,7 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   getRecord(callback) {
-   this.connector.get((data, error) => {
-        if (error) {
-          callback(data, error);
-        } else {
-          if (data.hasOwnProperty('body')) {
-            var body = (JSON.parse(data.body));
-            var cnt = body.result.length;
-            var ticket = [];
-
-            for(var i = 0; i < cnt; i += 1) {
-              var result = (JSON.parse(data.body).result);
-              ticket.push({
-                "change_ticket_number" : result[i].number,
-                "active" : result[i].active,
-                "priority" : result[i].priority,
-                "description" : result[i].description,
-                "work_start" : result[i].work_start,
-                "work_end" : result[i].work_end,
-                "change_ticket_key" : result[i].sys_id,
-              });
-            } 
-            callback(ticket, error); 
-          }
-        } 
-    });
+   this.connector.get(callback)
   }
   
   /**
@@ -194,25 +165,7 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   postRecord(callback) {
-   this.connector.post((data, error) => {
-      if (error) {
-        callback(data, error);
-      } else {
-        if (data.hasOwnProperty('body')) {
-          var result = (JSON.parse(data.body).result);
-          var ticket = {
-            "change_ticket_number" : result.number, 
-            "active" : result.active, 
-            "priority" : result.priority,
-            "description" : result.description, 
-            "work_start" : result.work_start, 
-            "work_end" : result.work_end,
-            "change_ticket_key" : result.sys_id,
-          };
-          callback(ticket, error); 
-        } 
-      }            
-    });  
+   this.connector.post(callback);
   }
 }
 
