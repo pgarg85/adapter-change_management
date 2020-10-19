@@ -109,8 +109,9 @@ class ServiceNowConnector {
       console.error('Bad response code.');
       callback.error = response;
     } else if (this.isHibernating(response)) {
-      callback.data = 'Service Now instance is hibernating';
+      callback.error = 'Service Now instance is hibernating';
       console.error(callbackError);
+      callback.error = response;
     } else {
       callback.data = response;
     }
@@ -141,10 +142,10 @@ class ServiceNowConnector {
     uri = this.constructUri(callOptions.serviceNowTable);
   const requestOptions = { method: callOptions.method , 
   auth: {
-      user: this.username,
-      pass: this.password,
+      user: callOptions.username,
+      pass: callOptions.password,
     },
-    baseUrl: this.url,
+    baseUrl: callOptions.url,
     uri,
     };
    request(requestOptions, (error, response, body) => {
@@ -164,11 +165,10 @@ class ServiceNowConnector {
  *   Will be HTML text if hibernating instance.
  * @param {error} callback.error - The error property of callback.
  */
- post(callOptions, callback) {
-  let getCallOptions = { ...this.options };
-  getCallOptions.method = 'POST';
-  getCallOptions.serviceNowTable = callOptions
-  this.sendRequest(getCallOptions, (results, error) => callback(results, error));
+ post(callback) {
+  let postCallOptions = { ...this.options };
+  postCallOptions.method = 'POST';
+  this.sendRequest(postCallOptions, (results, error) => callback(results, error));
 }
 
 }

@@ -146,71 +146,9 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   getRecord(callback) {
-    /**
-     * Write the body for this function.
-     * The function is a wrapper for this.connector's get() method.
-     * Note how the object was instantiated in the constructor().
-     * get() takes a callback function.
-     */
-    query = 'sysparm_limit=1'; 
-    uri = constructUri(this.serviceNowTable, query);
-    const requestOptions = { method: "GET" , 
-    auth: {
-      user: this.username,
-      pass: this.password,
-    },
-    baseUrl: this.url,
-    uri,
-    };
-    request(requestOptions, (error, response, body) => {
-    processRequestResults(error, response, body, (processedResults, processedError) => callback(processedResults, processedError));
-  });
-
-
+   ServiceNowConnector.get(callback)
   }
-
-  /**
- * @function constructUri
- * @description Build and return the proper URI by appending an optionally passed
- *   [URL query string]{@link https://en.wikipedia.org/wiki/Query_string}.
- *
- * @param {string} serviceNowTable - The table target of the ServiceNow table API.
- * @param {string} [query] - Optional URL query string.
- *
- * @return {string} ServiceNow URL
- */
- constructUri(serviceNowTable, query = null) {
-  let uri = `/api/now/table/${serviceNowTable}`;
-  if (query) {
-    uri = uri + '?' + query;
-  }
-  return uri;
-}
-
- processRequestResults(error, response, body, callback) {
-  /**
-   * You must build the contents of this function.
-   * Study your package and note which parts of the get()
-   * and post() functions evaluate and respond to data
-   * and/or errors the request() function returns.
-   * This function must not check for a hibernating instance;
-   * it must call function isHibernating.
-   */
-    if (error) {
-      console.error('Error present.');
-      callback.error = error;
-    } else if (!validResponseRegex.test(response.statusCode)) {
-      console.error('Bad response code.');
-      callback.error = response;
-    } else if (isHibernating(response)) {
-      callback.data = 'Service Now instance is hibernating';
-      console.error(callbackError);
-    } else {
-      callback.data = response;
-    }
-    return callback(callback.data , callback.error);
-}
-
+  
   /**
    * @memberof ServiceNowAdapter
    * @method postRecord
@@ -221,24 +159,7 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   postRecord(callback) {
-    /**
-     * Write the body for this function.
-     * The function is a wrapper for this.connector's post() method.
-     * Note how the object was instantiated in the constructor().
-     * post() takes a callback function.
-     */
-    uri = constructUri(this.serviceNowTable, null);
-    const requestOptions = { method: "POST" , 
-    auth: {
-      user: this.username,
-      pass: this.password,
-    },
-    baseUrl: this.url,
-    uri,
-    };
-    request(requestOptions, (error, response, body) => {
-    processRequestResults(error, response, body, (processedResults, processedError) => callback(processedResults, processedError));
-  });
+   ServiceNowConnector.post(callback);
   }
 }
 
